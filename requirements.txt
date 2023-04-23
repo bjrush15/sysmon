@@ -1,3 +1,4 @@
 speedtest-cli
 influxdb-client
 pyyaml
+requests

@@ -6,9 +6,11 @@ Example `settings.yaml` file:
 ```
 # settings.yaml
 ---
-network_speedtest:
+influxdb:
     influxdb_server: <influxdb url>
     influxdb_token: <influxdb token>
+    
+network_speedtest:
     influxdb_bucket: network-speedtest
     influxdb_org: system-monitor
 ```

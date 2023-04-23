@@ -1,22 +1,6 @@
-import influxdb_client
-from influxdb_client.client.write_api import SYNCHRONOUS
+from InfluxDB import SpeedTestData, InfluxDBConnection
 import speedtest
 from typing import Dict
-from dataclasses import dataclass
-from settings import Settings
-
-@dataclass
-class SpeedTestData:
-    download_mbps: float
-    upload_mbps: float
-    ping_ms: float
-    server_lat: float
-    server_long: float
-    server_city: str
-    server_country: str
-    server_vendor: str
-    client_lat: float
-    client_long: float
 
 
 def speedtestdata_from_dict(results: Dict) -> SpeedTestData:
@@ -50,29 +34,11 @@ def run_speedtest() -> Dict:
     return test.results.dict()
 
 
-def write_data_to_influx(data: SpeedTestData):
-    token = Settings.speedtest.influxdb_token
-    org = Settings.speedtest.influxdb_org
-    bucket = Settings.speedtest.influxdb_bucket
-    url = Settings.speedtest.influxdb_server
-
-    client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
-    client_write = client.write_api(write_options=SYNCHRONOUS)
-    p = influxdb_client.Point("net-updown").\
-        tag("server_city", data.server_city).\
-        tag("server_country", data.server_country).\
-        tag("server_vendor", data.server_vendor).\
-        tag("server_lat", data.server_lat).\
-        tag("server_long", data.server_long).\
-        tag("client_lat", data.client_lat).\
-        tag("client_long", data.client_long).\
-        field("download-mbps", data.download_mbps).\
-        field('upload-mbps', data.upload_mbps).\
-        field('ping-ms', data.ping_ms)
-    client_write.write(bucket=bucket, org=org, record=p)
-
-
 def run_speedtest_and_push_results():
+    conn = InfluxDBConnection()
+    if not conn.has_good_connection():
+        # usually requests throws an exception before this - this is a failsafe
+        raise ConnectionError(f"There was a problem reaching influxdb server {conn.url}. Could not reach /ping!")
     speedtest_results = run_speedtest()
     download_mbps = speedtest_results['download']/(1024*1024) # bps to Mbps
     upload_mbps = speedtest_results['upload']/(1024*1024)
@@ -81,4 +47,4 @@ def run_speedtest_and_push_results():
     print(f"Upload: {upload_mbps:.2f} Mbps,")
     print(f"Ping: {ping_ms:.2f} ms")
     print(speedtest_results)
-    write_data_to_influx(speedtestdata_from_dict(speedtest_results))
+    conn.write_speedtest_data(speedtestdata_from_dict(speedtest_results))
