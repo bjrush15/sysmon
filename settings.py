@@ -1,5 +1,6 @@
 import yaml
 from dataclasses import dataclass
+import logging
 
 
 @dataclass(frozen=True)
@@ -12,30 +13,28 @@ class InfluxSettings:
 class SpeedtestSettings:
     influxdb_bucket: str
     influxdb_org: str
+    monitor_rate: str
 
 
 # todo: rename this
-@dataclass(frozen=True)
 class SettingsObj:
     influxdb: InfluxSettings
-    speedtest: SpeedtestSettings
+    network_speed_test: SpeedtestSettings
 
-
-def load_settings() -> SettingsObj:
-    print("Loading settings from yaml file")
-    with open('settings.yaml', 'r') as f:
-        settings = yaml.safe_load(f)
-    return SettingsObj(
-        InfluxSettings(
+    def load_settings(self):
+        logging.debug("Loading settings from yaml file")
+        with open('settings.yaml', 'r') as f:
+            settings = yaml.safe_load(f)
+        self.influxdb = InfluxSettings(
             token=settings['influxdb']['token'],
             server=settings['influxdb']['server'],
 
-        ),
-        SpeedtestSettings(
+        )
+        self.network_speed_test = SpeedtestSettings(
             influxdb_org=settings['network_speedtest']['influxdb_org'],
             influxdb_bucket=settings['network_speedtest']['influxdb_bucket'],
-        ),
-    )
+            monitor_rate=settings['network_speedtest']['monitor_rate'],
+        )
 
 
-Settings = load_settings()
+Settings = SettingsObj()

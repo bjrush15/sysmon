@@ -13,4 +13,5 @@ influxdb:
 network_speedtest:
     influxdb_bucket: network-speedtest
     influxdb_org: system-monitor
+    refresh_rate: 1h (s, m, h, d are accepted units)
 ```

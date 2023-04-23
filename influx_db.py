@@ -27,8 +27,8 @@ class InfluxDBConnection:
         return requests.get(f'http://{self.url}/ping').status_code == 204
 
     def write_speedtest_data(self, data: SpeedTestData):
-        org = Settings.speedtest.influxdb_org
-        bucket = Settings.speedtest.influxdb_bucket
+        org = Settings.network_speed_test.influxdb_org
+        bucket = Settings.network_speed_test.influxdb_bucket
         client = influxdb_client.InfluxDBClient(url=self.url, token=self.token, org=org)
         client_write = client.write_api(write_options=SYNCHRONOUS)
         p = influxdb_client.Point("net-updown"). \
