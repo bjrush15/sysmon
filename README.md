@@ -7,11 +7,16 @@ Example `settings.yaml` file:
 # settings.yaml
 ---
 influxdb:
-    influxdb_server: <influxdb url>
-    influxdb_token: <influxdb token>
+    server: <influxdb url>
+    token: <influxdb token>
+    bucket: network-speedtest
+    org: system-monitor
     
 network_speedtest:
-    influxdb_bucket: network-speedtest
-    influxdb_org: system-monitor
+    measurement: net-updown # measurement name in bucket
     refresh_rate: 1h (s, m, h, d are accepted units)
+    
+cpu_monitor:
+    measurement: cpu-stats
+    refresh_rate 5s
 ```

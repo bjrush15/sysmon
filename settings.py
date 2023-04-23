@@ -7,12 +7,19 @@ import logging
 class InfluxSettings:
     token: str
     server: str
+    bucket: str
+    org: str
 
 
 @dataclass(frozen=True)
 class SpeedtestSettings:
-    influxdb_bucket: str
-    influxdb_org: str
+    measurement: str
+    monitor_rate: str
+
+
+@dataclass(frozen=True)
+class CPUTestSettings:
+    measurement: str
     monitor_rate: str
 
 
@@ -20,6 +27,7 @@ class SpeedtestSettings:
 class SettingsObj:
     influxdb: InfluxSettings
     network_speed_test: SpeedtestSettings
+    cpu_monitor: CPUTestSettings
 
     def load_settings(self):
         logging.debug("Loading settings from yaml file")
@@ -28,13 +36,19 @@ class SettingsObj:
         self.influxdb = InfluxSettings(
             token=settings['influxdb']['token'],
             server=settings['influxdb']['server'],
+            bucket=settings['influxdb']['bucket'],
+            org=settings['influxdb']['org'],
 
         )
         self.network_speed_test = SpeedtestSettings(
-            influxdb_org=settings['network_speedtest']['influxdb_org'],
-            influxdb_bucket=settings['network_speedtest']['influxdb_bucket'],
+            measurement=settings['network_speedtest']['measurement'],
             monitor_rate=settings['network_speedtest']['monitor_rate'],
         )
+        self.cpu_monitor = CPUTestSettings(
+            measurement=settings['cpu_monitor']['measurement'],
+            monitor_rate=settings['cpu_monitor']['monitor_rate'],
+        )
+
 
 
 Settings = SettingsObj()

@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from influx_db import InfluxDBConnection, TestResult
 
 UNIT_TO_S = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400}
 
@@ -13,15 +14,16 @@ def parse_refresh_rate(rate: str) -> float:
 
 
 class MonitoredStat:
-    def __init__(self, refresh_rate: str):
+    def __init__(self, influxdb_conn: InfluxDBConnection, refresh_rate: str):
+        self.conn = influxdb_conn
         self.refresh_rate_s = parse_refresh_rate(refresh_rate)
         self.last_measurement_timestamp = datetime.fromtimestamp(0)
 
-    def take_and_record_measurement(self):
-        self._measure()
+    def take_measurement(self) -> TestResult:
         self.last_measurement_timestamp = datetime.now()
+        return self._measure()
 
-    def _measure(self):
+    def _measure(self) -> TestResult:
         raise NotImplementedError("All stats must implement _measure()")
 
     def is_ready_for_measurement(self) -> bool:
