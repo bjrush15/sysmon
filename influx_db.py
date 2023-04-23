@@ -1,3 +1,5 @@
+import logging
+import time
 from dataclasses import dataclass
 from typing import Iterable, Optional
 from influxdb_client import InfluxDBClient, WriteApi
@@ -8,8 +10,6 @@ import requests
 
 @dataclass(frozen=True)
 class TestResult:
-    name: str
-
     def to_points(self) -> Iterable[Point]:
         raise NotImplementedError("All test data must implement to_point()")
 
@@ -47,17 +47,17 @@ class SpeedTestData(TestResult):
     client_long: float
 
     def to_points(self) -> Iterable[Point]:
-        p = Point(Settings.network_speed_test.measurement). \
-            tag("server_city", self.server_city). \
-            tag("server_country", self.server_country). \
-            tag("server_vendor", self.server_vendor). \
-            tag("server_lat", self.server_lat). \
-            tag("server_long", self.server_long). \
-            tag("client_lat", self.client_lat). \
-            tag("client_long", self.client_long). \
-            field("download-mbps", self.download_mbps). \
-            field('upload-mbps', self.upload_mbps). \
-            field('ping-ms', self.ping_ms)
+        p = Point(Settings.network_speed_test.measurement)
+        p.tag("server_city", self.server_city)
+        p.tag("server_country", self.server_country)
+        p.tag("server_vendor", self.server_vendor)
+        p.tag("server_lat", self.server_lat)
+        p.tag("server_long", self.server_long)
+        p.tag("client_lat", self.client_lat)
+        p.tag("client_long", self.client_long)
+        p.field("download-mbps", self.download_mbps)
+        p.field('upload-mbps', self.upload_mbps)
+        p.field('ping-ms', self.ping_ms)
         return [p]
 
 
@@ -79,7 +79,21 @@ class InfluxDBConnection:
         self.conn.close()
 
     def has_good_connection(self) -> bool:
-        return requests.get(f'http://{self.url}/ping').status_code == 204
+        try:
+            result = requests.get(f'http://{self.url}/ping')
+        except requests.exceptions.ConnectionError as e:
+            reason = ''.join(e.args[0].reason.args[-1].split(':')[1:]).strip()
+            logging.debug(f'Could not establish a connection to InfluxDB at {self.url}', exc_info=True)
+            logging.error(f'Failed to connect to InfluxDB at {self.url}: {reason}')
+            return False
+        if result.status_code != 204:
+            logging.error(f"Unexpected response from InfluxDB ping - Got response {result.status_code}, expected 204")
+            return False
+        return True
+
+    def wait_for_good_connection(self):
+        while not self.has_good_connection():
+            time.sleep(3)
 
     def _write(self, record: Iterable[Point]):
         self.writer.write(bucket=self.bucket, org=self.org, record=record)
