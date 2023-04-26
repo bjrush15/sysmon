@@ -15,6 +15,54 @@ class TestResult:
 
 
 @dataclass(frozen=True)
+class MemoryTestData(TestResult):
+    ram_total_bytes: int
+    ram_available_bytes: int
+    ram_available_percent: float
+    ram_used_bytes: int
+    ram_free_bytes: int
+    ram_active_bytes: int
+    ram_inactive_bytes: int
+    ram_buffers_bytes: int
+    ram_cached_bytes: int
+    ram_shared_bytes: int
+    ram_slab_bytes: int
+    swap_total_bytes: int
+    swap_used_bytes: int
+    swap_free_bytes: int
+    swap_used_percent: float
+    swap_in_total_bytes: int
+    swap_out_total_bytes: int
+
+    def to_points(self) -> Iterable[Point]:
+        # TODO: don't send alllll of these to db. Choose better. Config?
+        p = []
+        memp = Point(Settings.memory_monitor.ram_measurement)
+        memp.field('ram_total_bytes', self.ram_total_bytes)
+        memp.field('ram_available_bytes', self.ram_available_bytes)
+        memp.field('ram_available_percent', self.ram_available_percent)
+        memp.field('ram_used_bytes', self.ram_used_bytes)
+        memp.field('ram_free_bytes', self.ram_free_bytes)
+        memp.field('ram_active_bytes', self.ram_active_bytes)
+        memp.field('ram_inactive_bytes', self.ram_inactive_bytes)
+        memp.field('ram_buffers_bytes', self.ram_buffers_bytes)
+        memp.field('ram_cached_bytes', self.ram_cached_bytes)
+        memp.field('ram_shared_bytes', self.ram_shared_bytes)
+        memp.field('ram_slab_bytes', self.ram_slab_bytes)
+        p.append(memp)
+        if self.swap_total_bytes != 0:
+            swapp = Point(Settings.memory_monitor.swap_measurement)
+            swapp.field('swap_total_bytes', self.swap_total_bytes)
+            swapp.field('swap_used_bytes', self.swap_used_bytes)
+            swapp.field('swap_free_bytes', self.swap_free_bytes)
+            swapp.field('swap_used_percent', self.swap_used_percent)
+            swapp.field('swap_in_total_bytes', self.swap_in_total_bytes)
+            swapp.field('swap_out_total_bytes', self.swap_out_total_bytes)
+            p.append(swapp)
+        return p
+
+
+@dataclass(frozen=True)
 class CPUTestData(TestResult):
     cpu_utilization_percents: Iterable[float]
     cpu_freq_mhz: Iterable[float]

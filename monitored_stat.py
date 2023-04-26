@@ -15,8 +15,7 @@ def parse_refresh_rate(rate: str) -> float:
 
 
 class MonitoredStat:
-    def __init__(self, name: str, influxdb_conn: InfluxDBConnection, refresh_rate: str):
-        self.conn = influxdb_conn
+    def __init__(self, name: str, refresh_rate: str):
         self.name = name
         self.refresh_rate_s = parse_refresh_rate(refresh_rate)
         self.last_measurement_timestamp = datetime.fromtimestamp(0)

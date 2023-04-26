@@ -23,11 +23,19 @@ class CPUTestSettings:
     monitor_rate: str
 
 
+@dataclass(frozen=True)
+class MemoryTestSettings:
+    ram_measurement: str
+    swap_measurement: str
+    monitor_rate: str
+
+
 # todo: rename this
 class SettingsObj:
     influxdb: InfluxSettings
     network_speed_test: SpeedtestSettings
     cpu_monitor: CPUTestSettings
+    memory_monitor: MemoryTestSettings
 
     def load_settings(self):
         logging.debug("Loading settings from yaml file")
@@ -48,7 +56,11 @@ class SettingsObj:
             measurement=settings['cpu_monitor']['measurement'],
             monitor_rate=settings['cpu_monitor']['monitor_rate'],
         )
-
+        self.memory_monitor = MemoryTestSettings(
+            ram_measurement=settings['memory_monitor']['ram_measurement'],
+            swap_measurement=settings['memory_monitor']['swap_measurement'],
+            monitor_rate=settings['memory_monitor']['monitor_rate'],
+        )
 
 
 Settings = SettingsObj()

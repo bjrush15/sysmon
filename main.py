@@ -7,6 +7,7 @@ from network_speed_monitor import NetworkSpeedMonitor
 from cpu_monitor import CPUMonitor
 from settings import Settings
 from influx_db import InfluxDBConnection
+from memory_monitor import MemoryUsageMonitor
 
 
 def start_monitoring(influx_conn: InfluxDBConnection, monitors: Iterable[MonitoredStat]):
@@ -38,8 +39,9 @@ def main():
     conn.connect()
 
     monitors = [
-        NetworkSpeedMonitor('network-speedtest', conn, Settings.network_speed_test.monitor_rate),
-        CPUMonitor('cpu-stat', conn, Settings.cpu_monitor.monitor_rate),
+        # NetworkSpeedMonitor('network-speedtest', Settings.network_speed_test.monitor_rate),
+        CPUMonitor('cpu-stat', Settings.cpu_monitor.monitor_rate),
+        MemoryUsageMonitor('memory-monitor', Settings.memory_monitor.monitor_rate),
     ]
 
     try:

@@ -19,4 +19,9 @@ network_speedtest:
 cpu_monitor:
     measurement: cpu-stats
     refresh_rate 5s
+
+memory_monitor:
+    ram_measurement: ram-stats
+    swap_measurement: swawp-stats
+    monitor_rate: 5s
 ```
