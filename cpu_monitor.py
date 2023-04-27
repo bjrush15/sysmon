@@ -7,15 +7,19 @@ import logging
 
 class CPUMonitor(MonitoredStat):
     def _measure(self) -> Tuple[bool, Optional[TestResult]]:
-        cpu_load_avg_1m_percent, cpu_load_avg_5m_percent, cpu_load_avg_15m_percent = [x/psutil.cpu_count() * 100 for x in psutil.getloadavg()]
-        cpu_freq_mhz = [current for current, _, _ in psutil.cpu_freq(True)]
-        cpu_utilization_percents = psutil.cpu_percent(0.5, True)
-        cpu_test_data = CPUTestData(
-            cpu_utilization_percents=cpu_utilization_percents,
-            cpu_freq_mhz=cpu_freq_mhz,
-            cpu_load_avg_1m_percent=cpu_load_avg_1m_percent,
-            cpu_load_avg_5m_percent=cpu_load_avg_5m_percent,
-            cpu_load_avg_15m_percent=cpu_load_avg_15m_percent,
+        load_avg_1m_percent, load_avg_5m_percent, load_avg_15m_percent = [x/psutil.cpu_count() * 100 for x in psutil.getloadavg()]
+        freq_mhz = [current for current, _, _ in psutil.cpu_freq(True)]
+        utilization_percents = psutil.cpu_percent(0.5, True)
+        stats = psutil.cpu_stats()
+        test_data = CPUTestData(
+            utilization_percents=utilization_percents,
+            freq_mhz=freq_mhz,
+            load_avg_1m_percent=load_avg_1m_percent,
+            load_avg_5m_percent=load_avg_5m_percent,
+            load_avg_15m_percent=load_avg_15m_percent,
+            num_interrupts=stats.interrupts,
+            num_context_switches=stats.ctx_switches,
+            num_software_interrupts=stats.soft_interrupts,
         )
-        logging.debug(cpu_test_data)
-        return True, cpu_test_data
+        logging.debug(test_data)
+        return True, test_data

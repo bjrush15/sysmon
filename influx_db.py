@@ -64,20 +64,28 @@ class MemoryTestData(TestResult):
 
 @dataclass(frozen=True)
 class CPUTestData(TestResult):
-    cpu_utilization_percents: Iterable[float]
-    cpu_freq_mhz: Iterable[float]
-    cpu_load_avg_1m_percent: float
-    cpu_load_avg_5m_percent: float
-    cpu_load_avg_15m_percent: float
+    utilization_percents: Iterable[float]
+    freq_mhz: Iterable[float]
+    load_avg_1m_percent: float
+    load_avg_5m_percent: float
+    load_avg_15m_percent: float
+    num_context_switches: int
+    num_interrupts: int
+    num_software_interrupts: int
 
     def to_points(self) -> Iterable[Point]:
         points = []
-        for core, (utilization_percent, freq_mhz) in enumerate(zip(self.cpu_utilization_percents, self.cpu_freq_mhz)):
+        for core, (utilization_percent, freq_mhz) in enumerate(zip(self.utilization_percents, self.freq_mhz)):
             p = Point(Settings.cpu_monitor.measurement)
             p.tag('core', int(core))
             p.field('utilization-percent', utilization_percent)
             p.field('freq-mhz', freq_mhz)
             points.append(p)
+        p = Point(Settings.cpu_monitor.measurement)
+        p.field('context_switches', self.num_context_switches)
+        p.field('interrupts', self.num_interrupts)
+        p.field('software_interrupts', self.num_software_interrupts)
+        points.append(p)
         return points
 
 
