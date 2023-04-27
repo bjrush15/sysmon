@@ -39,7 +39,7 @@ def main():
     conn.connect()
 
     monitors = [
-        # NetworkSpeedMonitor('network-speedtest', Settings.network_speed_test.monitor_rate),
+        NetworkSpeedMonitor('network-speedtest', Settings.network_speed_test.monitor_rate),
         CPUMonitor('cpu-stat', Settings.cpu_monitor.monitor_rate),
         MemoryUsageMonitor('memory-monitor', Settings.memory_monitor.monitor_rate),
     ]
