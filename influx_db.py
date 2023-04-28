@@ -85,6 +85,9 @@ class CPUTestData(TestResult):
         p.field('context_switches', self.num_context_switches)
         p.field('interrupts', self.num_interrupts)
         p.field('software_interrupts', self.num_software_interrupts)
+        p.field('load_avg_1m_percent', self.load_avg_1m_percent)
+        p.field('load_avg_5m_percent', self.load_avg_5m_percent)
+        p.field('load_avg_15m_percent', self.load_avg_15m_percent)
         points.append(p)
         return points
 
