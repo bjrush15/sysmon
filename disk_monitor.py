@@ -54,4 +54,3 @@ class DiskMonitor(MonitoredStat):
             disk_stats=disk_stats,
         )
         return True, result
-

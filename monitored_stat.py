@@ -34,4 +34,3 @@ class MonitoredStat:
 
     def get_time_to_next_measurement_s(self) -> float:
         return (self.last_measurement_timestamp + timedelta(0, self.refresh_rate_s) - datetime.now()).total_seconds()
-

@@ -9,7 +9,8 @@ from monitored_stat import MonitoredStat
 
 class CPUMonitor(MonitoredStat):
     def _measure(self) -> Tuple[bool, Optional[TestResult]]:
-        load_avg_1m_percent, load_avg_5m_percent, load_avg_15m_percent = [x/psutil.cpu_count() * 100 for x in psutil.getloadavg()]
+        load_avg_1m_percent, load_avg_5m_percent, load_avg_15m_percent = [x / psutil.cpu_count() * 100 for x in
+                                                                          psutil.getloadavg()]
         freq_mhzs = [current for current, _, _ in psutil.cpu_freq(True)]
         utilization_percents = psutil.cpu_percent(0.5, True)
         stats = psutil.cpu_stats()

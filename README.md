@@ -3,6 +3,7 @@ Python system monitor backed by InfluxDB.
 ### Setup
 
 Example `settings.yaml` file:
+
 ```
 # settings.yaml
 ---
