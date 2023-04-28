@@ -117,6 +117,40 @@ class SpeedTestData(TestResult):
         return [p]
 
 
+@dataclass(frozen=True)
+class NetworkIOInterfaceStats:
+    interface: str
+    bytes_sent: int
+    bytes_recv: int
+    packets_sent: int
+    packets_recv: int
+    errin: int
+    errout: int
+    dropin: int
+    dropout: int
+
+
+@dataclass(frozen=True)
+class NetworkIOData(TestResult):
+    interface_data: Iterable[NetworkIOInterfaceStats]
+
+    def to_points(self) -> Iterable[Point]:
+        points = []
+        for d in self.interface_data:
+            p = Point(Settings.network_io_monitor.measurement)
+            p.tag('interface', d.interface)
+            p.field('bytes_sent', d.bytes_sent)
+            p.field('bytes_recv', d.bytes_recv)
+            p.field('packets_sent', d.packets_sent)
+            p.field('packets_recv', d.packets_recv)
+            p.field('errors_incoming', d.errin)
+            p.field('errors_outgoing', d.errout)
+            p.field('packets_dropped_incoming', d.dropin)
+            p.field('packets_dropped_outgoing', d.dropout)
+            points.append(p)
+        return points
+
+
 class InfluxDBConnection:
     def __init__(self):
         self.url: Settings.influxdb.server = Settings.influxdb.server

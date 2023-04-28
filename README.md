@@ -12,9 +12,16 @@ influxdb:
     bucket: network-speedtest
     org: system-monitor
     
-network_speedtest:
-    measurement: net-updown # measurement name in bucket
-    refresh_rate: 1h (s, m, h, d are accepted units)
+network:
+    speedtest:
+        measurement: net-speed # measurement name in bucket
+        refresh_rate: 1h (s, m, h, d are accepted units)
+    io:
+        interfaces:
+          - eth0
+          - wlan0
+        measurement: net-updown
+        monitor_rate: 30s
     
 cpu_monitor:
     measurement: cpu-stats

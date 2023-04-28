@@ -30,10 +30,18 @@ class MemoryTestSettings:
     monitor_rate: str
 
 
+@dataclass(frozen=True)
+class NetworkIOSettings:
+    interfaces: list[str]
+    measurement: str
+    monitor_rate: str
+
+
 # todo: rename this
 class SettingsObj:
     influxdb: InfluxSettings
     network_speed_test: SpeedtestSettings
+    network_io_monitor: NetworkIOSettings
     cpu_monitor: CPUTestSettings
     memory_monitor: MemoryTestSettings
 
@@ -49,8 +57,13 @@ class SettingsObj:
 
         )
         self.network_speed_test = SpeedtestSettings(
-            measurement=settings['network_speedtest']['measurement'],
-            monitor_rate=settings['network_speedtest']['monitor_rate'],
+            measurement=settings['network']['speedtest']['measurement'],
+            monitor_rate=settings['network']['speedtest']['monitor_rate'],
+        )
+        self.network_io_monitor = NetworkIOSettings(
+            interfaces=settings['network']['io']['interfaces'],
+            measurement=settings['network']['io']['measurement'],
+            monitor_rate=settings['network']['io']['monitor_rate'],
         )
         self.cpu_monitor = CPUTestSettings(
             measurement=settings['cpu_monitor']['measurement'],

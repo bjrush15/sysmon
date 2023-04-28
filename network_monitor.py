@@ -1,9 +1,10 @@
-from influx_db import SpeedTestData
-from influx_db import TestResult
+import psutil
+from influx_db import SpeedTestData, TestResult, NetworkIOInterfaceStats, NetworkIOData
 import speedtest
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple, Optional, List
 from monitored_stat import MonitoredStat
 import logging
+from settings import Settings
 
 BITS_PER_S_TO_M_BITS_PER_S = 1024 * 1024
 
@@ -47,3 +48,28 @@ class NetworkSpeedMonitor(MonitoredStat):
         )
 
 
+class NetworkIOMonitor(MonitoredStat):
+    def _measure(self) -> Tuple[bool, Optional[TestResult]]:
+        netstats = psutil.net_io_counters(pernic=True)
+        interface_data: List[NetworkIOInterfaceStats] = []
+        for iface in Settings.network_io_monitor.interfaces:
+            if iface in netstats.keys():
+                interface_data.append(
+                    NetworkIOInterfaceStats(
+                        interface=iface,
+                        bytes_sent=netstats[iface].bytes_sent,
+                        bytes_recv=netstats[iface].bytes_recv,
+                        packets_sent=netstats[iface].packets_sent,
+                        packets_recv=netstats[iface].packets_recv,
+                        errin=netstats[iface].errin,
+                        errout=netstats[iface].errout,
+                        dropin=netstats[iface].dropin,
+                        dropout=netstats[iface].dropout,
+                    )
+                )
+            else:
+                logging.warning(f"Could not find interface {iface}")
+        results = NetworkIOData(
+            interface_data=interface_data
+        )
+        return True, results
