@@ -154,6 +154,52 @@ class NetworkIOData(TestResult):
         return points
 
 
+@dataclass(frozen=True)
+class DiskIOStats:
+    device: str
+    directory: str
+    total_bytes: int
+    used_bytes: int
+    free_bytes: int
+    percent_used: float
+    read_count: int
+    write_count: int
+    read_bytes: int
+    write_bytes: int
+    read_time_ms: int
+    write_time_ms: int
+    busy_time_ms: int
+    read_merged_count: int
+    write_merged_count: int
+
+
+@dataclass(frozen=True)
+class DiskTestData(TestResult):
+    disk_stats: Iterable[DiskIOStats]
+
+    def to_points(self) -> Iterable[Point]:
+        points = []
+        for disk in self.disk_stats:
+            p = Point(Settings.disk_monitor.measurement)
+            p.tag('directory', disk.directory)
+            p.tag('device', disk.device)
+            p.field('total_bytes', disk.total_bytes)
+            p.field('used_bytes', disk.used_bytes)
+            p.field('free_bytes', disk.free_bytes)
+            p.field('percent_used', disk.percent_used)
+            p.field('read_count', disk.read_count)
+            p.field('write_count', disk.write_count)
+            p.field('read_bytes', disk.read_bytes)
+            p.field('write_bytes', disk.write_bytes)
+            p.field('read_time_ms', disk.read_time_ms)
+            p.field('write_time_ms', disk.write_time_ms)
+            p.field('busy_time_ms', disk.busy_time_ms)
+            p.field('read_merged_count', disk.read_merged_count)
+            p.field('write_merged_count', disk.write_merged_count)
+            points.append(p)
+        return points
+
+
 class InfluxDBConnection:
     def __init__(self):
         self.url: Settings.influxdb.server = Settings.influxdb.server

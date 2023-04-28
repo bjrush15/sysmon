@@ -31,4 +31,11 @@ memory_monitor:
     ram_measurement: ram-stats
     swap_measurement: swawp-stats
     monitor_rate: 5s
+    
+disk_monitor:
+    directories:
+      - /
+      - /mnt
+    measurement: disk-stats
+    monitor_rate 5s
 ```

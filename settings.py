@@ -37,6 +37,13 @@ class NetworkIOSettings:
     monitor_rate: str
 
 
+@dataclass(frozen=True)
+class DiskTestSettings:
+    directories: list[str]
+    measurement: str
+    monitor_rate: str
+
+
 # todo: rename this
 class SettingsObj:
     influxdb: InfluxSettings
@@ -44,6 +51,7 @@ class SettingsObj:
     network_io_monitor: NetworkIOSettings
     cpu_monitor: CPUTestSettings
     memory_monitor: MemoryTestSettings
+    disk_monitor: DiskTestSettings
 
     def load_settings(self):
         logging.debug("Loading settings from yaml file")
@@ -73,6 +81,11 @@ class SettingsObj:
             ram_measurement=settings['memory_monitor']['ram_measurement'],
             swap_measurement=settings['memory_monitor']['swap_measurement'],
             monitor_rate=settings['memory_monitor']['monitor_rate'],
+        )
+        self.disk_monitor = DiskTestSettings(
+            directories=settings['disk_monitor']['directories'],
+            measurement=settings['disk_monitor']['measurement'],
+            monitor_rate=settings['disk_monitor']['monitor_rate'],
         )
 
 
