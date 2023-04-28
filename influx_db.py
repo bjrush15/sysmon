@@ -2,10 +2,12 @@ import logging
 import time
 from dataclasses import dataclass
 from typing import Iterable, Optional
-from influxdb_client import InfluxDBClient, WriteApi
-from influxdb_client.client.write_api import SYNCHRONOUS, Point
-from settings import Settings
+
 import requests
+from influxdb_client import InfluxDBClient, WriteApi
+from influxdb_client.client.write_api import Point, SYNCHRONOUS
+
+from settings import Settings
 
 
 @dataclass(frozen=True)

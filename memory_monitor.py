@@ -1,7 +1,9 @@
+from typing import Optional, Tuple
+
 import psutil
-from typing import Tuple, Optional
+
+from influx_db import MemoryTestData, TestResult
 from monitored_stat import MonitoredStat
-from influx_db import TestResult, MemoryTestData
 
 
 class MemoryUsageMonitor(MonitoredStat):

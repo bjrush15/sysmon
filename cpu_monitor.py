@@ -1,8 +1,10 @@
-from monitored_stat import MonitoredStat
-from typing import Tuple, Optional
-from influx_db import CPUTestData, TestResult, CPUCoreData
-import psutil
 import logging
+from typing import Optional, Tuple
+
+import psutil
+
+from influx_db import CPUCoreData, CPUTestData, TestResult
+from monitored_stat import MonitoredStat
 
 
 class CPUMonitor(MonitoredStat):

@@ -1,14 +1,16 @@
-import time
 import logging
-import urllib3.exceptions
-from monitored_stat import MonitoredStat
+import time
 from typing import Iterable
-from network_monitor import NetworkSpeedMonitor, NetworkIOMonitor
+
+import urllib3.exceptions
+
 from cpu_monitor import CPUMonitor
-from settings import Settings
+from disk_monitor import DiskMonitor
 from influx_db import InfluxDBConnection
 from memory_monitor import MemoryUsageMonitor
-from disk_monitor import DiskMonitor
+from monitored_stat import MonitoredStat
+from network_monitor import NetworkIOMonitor, NetworkSpeedMonitor
+from settings import Settings
 
 
 def start_monitoring(influx_conn: InfluxDBConnection, monitors: Iterable[MonitoredStat]):

@@ -1,9 +1,11 @@
-import psutil
-from influx_db import SpeedTestData, TestResult, NetworkIOInterfaceStats, NetworkIOData
-import speedtest
-from typing import Dict, Tuple, Optional, List
-from monitored_stat import MonitoredStat
 import logging
+from typing import Dict, List, Optional, Tuple
+
+import psutil
+import speedtest
+
+from influx_db import NetworkIOData, NetworkIOInterfaceStats, SpeedTestData, TestResult
+from monitored_stat import MonitoredStat
 from settings import Settings
 
 BITS_PER_S_TO_M_BITS_PER_S = 1024 * 1024
