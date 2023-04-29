@@ -19,7 +19,7 @@ def get_mount_point_from_directory(d: str):
 class DiskMonitor(MonitoredStat):
     def _measure(self) -> Tuple[bool, Optional[TestResult]]:
         disk_stats = []
-        parts = psutil.disk_partitions(all=True)
+        parts = psutil.disk_partitions(all=False)
         disk_io = psutil.disk_io_counters(perdisk=True, nowrap=True)
         for d in Settings.disk_monitor.directories:
             if not exists(d):
@@ -28,7 +28,7 @@ class DiskMonitor(MonitoredStat):
             mount_point = get_mount_point_from_directory(d)
             for device in parts:
                 if device.mountpoint == mount_point:
-                    print(f'found {mount_point} at {device.device}. {device}')
+                    logging.info(f'found {mount_point} at {device.device}. {device}')
                     disk_util = disk_io[basename(device.device)]
                     disk_usage = psutil.disk_usage(d)
                     disk_stats.append(
