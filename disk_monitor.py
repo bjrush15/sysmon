@@ -23,7 +23,7 @@ class DiskMonitor(MonitoredStat):
         disk_io = psutil.disk_io_counters(perdisk=True, nowrap=True)
         for d in Settings.disk_monitor.directories:
             if not exists(d):
-                logging.warning(f'Could not find directory {d}. SKIPPING')
+                logging.warning(f'Could not find directory "{d}". SKIPPING')
                 continue
             mount_point = get_mount_point_from_directory(d)
             for device in parts:
