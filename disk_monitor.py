@@ -28,6 +28,7 @@ class DiskMonitor(MonitoredStat):
             mount_point = get_mount_point_from_directory(d)
             for device in parts:
                 if device.mountpoint == mount_point:
+                    print(f'found {mount_point} at {device.device}. {device}')
                     disk_util = disk_io[basename(device.device)]
                     disk_usage = psutil.disk_usage(d)
                     disk_stats.append(
